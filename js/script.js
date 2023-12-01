@@ -1,5 +1,14 @@
 const global = {
     currentPage: window.location.pathname,
+    search:{
+        term: '',
+        type: '',
+        page: 1,
+        totalPages: 1
+    },
+    api:{
+        Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkZDVkNzk2OTVmM2MyYzAyNmQyODI0MGZkYjYxOTA2NCIsInN1YiI6IjY1NjYxZjBjMTdiNWVmMDEwNTQ4ZDM3NyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.Rs40domB8G7RrQIv60j00NE15iS9eVE_-zcoTLZ6dVA'
+    }
 };
 
 //Display popular Movies
@@ -224,6 +233,21 @@ async function displayShowDetails(){
   document.querySelector('#show-details').appendChild(div);
 }
 
+//Search Movies/Shows
+async function search(){
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+
+    global.search.type = urlParams.get('type');
+    global.search.term = urlParams.get('search-term');
+
+    if(global.search.term !== '' && global.search.type !== null){
+        const results = await searchAPIData();
+        console.log(results);
+    }else{
+        showAlert('Please enter a search term');
+    }
+}
 
 // Display Slider Movies
 async function displaySlider() {
@@ -278,11 +302,28 @@ async function fetchAPIData(endpoint){
         method: 'GET',
         headers: {
           accept: 'application/json',
-          Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkZDVkNzk2OTVmM2MyYzAyNmQyODI0MGZkYjYxOTA2NCIsInN1YiI6IjY1NjYxZjBjMTdiNWVmMDEwNTQ4ZDM3NyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.Rs40domB8G7RrQIv60j00NE15iS9eVE_-zcoTLZ6dVA'
+          Authorization: global.api.Authorization
         }
       };
     showSpinner();
     const response = await fetch(`https://api.themoviedb.org/3/${endpoint}?language=en-US&page=1`, options);
+
+    const data = await response.json();
+    hideSpinner();
+    return data;
+}
+
+//Make request to Search
+async function searchAPIData(){
+    const options = {
+        method: 'GET',
+        headers: {
+          accept: 'application/json',
+          Authorization: global.api.Authorization
+        }
+      };
+    showSpinner();
+    const response = await fetch(`https://api.themoviedb.org/3/search/${global.search.type}?language=en-US&query=${global.search.term}`, options);
 
     const data = await response.json();
     hideSpinner();
@@ -307,6 +348,16 @@ function hideSpinner(){
     document.querySelector('.spinner').classList.remove('show');
 }
 
+//Shoe Alert
+function showAlert(message, className){
+    const alertEl = document.createElement('div');
+    alertEl.classList.add('alert', className);
+    alertEl.appendChild(document.createTextNode(message));
+    document.querySelector('#alert').appendChild(alertEl);
+
+    setTimeout(() => alertEl.remove(), 3000);
+}
+
 //Init App
 function init(){
     switch(global.currentPage){
@@ -325,7 +376,7 @@ function init(){
             displayShowDetails();
             break;
         case '/search.html':
-            console.log('Search');
+            search();
             break;    
     }
     highlightActiveLink();
