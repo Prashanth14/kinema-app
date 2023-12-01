@@ -1,4 +1,4 @@
-# kinema-app
+# kinema-app https://fascinating-pony-f10d4a.netlify.app
 **KINEMA - Movie & TV Show Explorer**
 
 **Overview**
