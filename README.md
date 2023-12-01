@@ -1,4 +1,4 @@
-# kinema-app [https://fascinating-pony-f10d4a.netlify.app](https://kinema-pmrqrftq8-prashanth14.vercel.app)
+# kinema-app(https://kinema-pmrqrftq8-prashanth14.vercel.app)
 **KINEMA - Movie & TV Show Explorer**
 
 **Overview**
